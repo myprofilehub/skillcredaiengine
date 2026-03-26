@@ -1,65 +1,88 @@
-import Image from "next/image";
+import { prisma } from '@/lib/prisma';
+import DashboardClient from './DashboardClient';
 
-export default function Home() {
-  return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+// Helper function to format date
+function getTimeAgo(date: Date) {
+  const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
+  let interval = seconds / 31536000;
+  if (interval > 1) return Math.floor(interval) + " years ago";
+  interval = seconds / 2592000;
+  if (interval > 1) return Math.floor(interval) + " months ago";
+  interval = seconds / 86400;
+  if (interval > 1) return Math.floor(interval) + " days ago";
+  interval = seconds / 3600;
+  if (interval > 1) return Math.floor(interval) + " hours ago";
+  interval = seconds / 60;
+  if (interval > 1) return Math.floor(interval) + " minutes ago";
+  return Math.floor(seconds) + " seconds ago";
+}
+
+// Ensure the page is dynamically rendered, as it relies on database state
+export const dynamic = 'force-dynamic';
+
+export default async function DashboardPage() {
+  const [postsCount, imagesCount, videosCount] = await Promise.all([
+    prisma.generatedPost.count(),
+    prisma.generatedImage.count(),
+    prisma.generatedVideo.count(),
+  ]);
+
+  const rawPosts = await prisma.generatedPost.findMany({
+    orderBy: { createdAt: 'desc' },
+    take: 3,
+  });
+  
+  const rawImages = await prisma.generatedImage.findMany({
+    orderBy: { createdAt: 'desc' },
+    take: 3,
+  });
+  
+  const rawVideos = await prisma.generatedVideo.findMany({
+    orderBy: { createdAt: 'desc' },
+    take: 3,
+  });
+  
+  const allGenerations = [
+    ...rawPosts.map((p: any) => ({
+      id: p.id,
+      type: "POST" as const,
+      title: p.content.slice(0, 30).trim() + (p.content.length > 30 ? '...' : ''),
+      stream: p.stream || 'General',
+      createdAt: p.createdAt,
+      status: p.status
+    })),
+    ...rawImages.map((i: any) => ({
+      id: i.id,
+      type: "IMAGE" as const,
+      title: i.prompt.slice(0, 30).trim() + (i.prompt.length > 30 ? '...' : ''),
+      stream: i.stream || 'General',
+      createdAt: i.createdAt,
+      status: i.status
+    })),
+    ...rawVideos.map((v: any) => ({
+      id: v.id,
+      type: "VIDEO" as const,
+      title: v.title.slice(0, 30).trim() + (v.title.length > 30 ? '...' : ''),
+      stream: 'General',
+      createdAt: v.createdAt,
+      status: v.status
+    })),
+  ].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()).slice(0, 3);
+
+  const recentGenerations = allGenerations.map(gen => ({
+    id: gen.id,
+    type: gen.type,
+    title: gen.title,
+    stream: gen.stream,
+    timeAgo: getTimeAgo(gen.createdAt),
+    status: gen.status
+  }));
+  
+  const stats = {
+    posts: postsCount,
+    images: imagesCount,
+    videos: videosCount
+  };
+
+  return <DashboardClient data={{ stats, recentGenerations }} />;
 }

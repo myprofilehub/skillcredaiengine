@@ -39,3 +39,15 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+/src/generated/prisma
+
+# Generated AI assets
+/public/generated-images/
+/*.mp3
+/*.jpg
+/list_models.mjs
+/build_output.txt
+/test_*.js
+/test_*.mjs
+/tmp/
