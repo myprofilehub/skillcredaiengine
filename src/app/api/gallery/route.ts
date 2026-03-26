@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 
 import { prisma } from '@/lib/prisma';
+import { GeneratedVideo, GeneratedImage } from '@prisma/client';
 
 export async function GET() {
   try {
@@ -24,8 +25,8 @@ export async function GET() {
 
     // Combine and mark types
     const galleryItems = [
-      ...videos.map(v => ({ ...v, type: 'video' })),
-      ...images.map(i => ({ ...i, type: 'image' }))
+      ...videos.map((v: GeneratedVideo) => ({ ...v, type: 'video' })),
+      ...images.map((i: GeneratedImage) => ({ ...i, type: 'image' }))
     ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
     return NextResponse.json({ success: true, items: galleryItems });
