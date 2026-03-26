@@ -107,6 +107,9 @@ export async function POST(req: Request) {
       fs.writeFileSync(filePath, imageBuffer);
 
       const relativePath = `/generated-images/${fileName}`;
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || '';
+      const absolutePath = (baseUrl && relativePath.startsWith('/')) ? `${baseUrl}${relativePath}` : relativePath;
+      
       const imageId = crypto.randomUUID();
 
       // Persist to Prisma
@@ -123,7 +126,7 @@ export async function POST(req: Request) {
         console.error("DB Save Error:", dbError);
       }
 
-      results.push({ id: imageId, url: relativePath });
+      results.push({ id: imageId, url: absolutePath });
     }
 
     if (results.length === 0) {

@@ -23,10 +23,30 @@ export async function GET() {
       })
     ]);
 
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || '';
+
+    // Function to ensure URL is absolute if it starts with /
+    const formatUrl = (url: string | null) => {
+      if (!url) return null;
+      if (url.startsWith('/') && baseUrl) {
+        return `${baseUrl}${url}`;
+      }
+      return url;
+    };
+
     // Combine and mark types
     const galleryItems = [
-      ...videos.map((v: GeneratedVideo) => ({ ...v, type: 'video' })),
-      ...images.map((i: GeneratedImage) => ({ ...i, type: 'image' }))
+      ...videos.map((v: GeneratedVideo) => ({ 
+        ...v, 
+        type: 'video',
+        videoUrl: formatUrl(v.videoUrl),
+        thumbnailUrl: formatUrl(v.thumbnailUrl)
+      })),
+      ...images.map((i: GeneratedImage) => ({ 
+        ...i, 
+        type: 'image',
+        imageUrl: formatUrl(i.imageUrl)
+      }))
     ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
     return NextResponse.json({ success: true, items: galleryItems });

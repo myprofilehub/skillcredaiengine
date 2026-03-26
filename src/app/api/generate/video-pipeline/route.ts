@@ -106,7 +106,10 @@ export async function POST(req: Request) {
     console.log(`\n🎉 NATIVE HUNYUANVIDEO PIPELINE COMPLETED IN ${finalTime} SECONDS!`);
     console.log(`Saved flawless output to ${outputPath}`);
 
+    const appBaseUrl = process.env.NEXT_PUBLIC_BASE_URL || '';
     const videoUrl = `/generated-videos/${jobId}/final_video.mp4`;
+    const absoluteVideoUrl = (appBaseUrl && videoUrl.startsWith('/')) ? `${appBaseUrl}${videoUrl}` : videoUrl;
+    const absoluteThumbnailUrl = (appBaseUrl && videoUrl.startsWith('/')) ? `${appBaseUrl}${videoUrl.replace('.mp4', '.jpg')}` : videoUrl.replace('.mp4', '.jpg');
 
     // Update Prisma status
     if (videoId) {
@@ -115,8 +118,8 @@ export async function POST(req: Request) {
           where: { id: videoId },
           data: {
             status: 'COMPLETED',
-            videoUrl: videoUrl,
-            thumbnailUrl: videoUrl.replace('.mp4', '.jpg') // Placeholder thumbnail strategy
+            videoUrl: videoUrl, // Save relative with DB, the API will handle the absolute return
+            thumbnailUrl: videoUrl.replace('.mp4', '.jpg')
           }
         });
       } catch (dbError) {
@@ -126,7 +129,8 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       success: true,
-      videoUrl: videoUrl,
+      videoUrl: absoluteVideoUrl,
+      thumbnailUrl: absoluteThumbnailUrl,
       jobId,
       scriptData: overrideScenes || null,
       message: `HunyuanVideo 1.5 master generation completed beautifully in ${finalTime} seconds!`
