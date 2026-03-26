@@ -42,6 +42,17 @@ export default async function DashboardPage() {
     take: 3,
   });
   
+  // Sanitize baseUrl to ensure no trailing slash
+  const baseUrl = (process.env.NEXT_PUBLIC_BASE_URL || '').replace(/\/+$/, '');
+
+  const formatUrl = (url: string | null) => {
+    if (!url) return undefined;
+    if (url.startsWith('/') && baseUrl) {
+      return `${baseUrl}${url}`;
+    }
+    return url;
+  };
+
   const allGenerations = [
     ...rawPosts.map((p: any) => ({
       id: p.id,
@@ -57,7 +68,8 @@ export default async function DashboardPage() {
       title: i.prompt.slice(0, 30).trim() + (i.prompt.length > 30 ? '...' : ''),
       stream: i.stream || 'General',
       createdAt: i.createdAt,
-      status: i.status
+      status: i.status,
+      imageUrl: formatUrl(i.imageUrl)
     })),
     ...rawVideos.map((v: any) => ({
       id: v.id,
@@ -65,7 +77,8 @@ export default async function DashboardPage() {
       title: v.title.slice(0, 30).trim() + (v.title.length > 30 ? '...' : ''),
       stream: 'General',
       createdAt: v.createdAt,
-      status: v.status
+      status: v.status,
+      imageUrl: formatUrl(v.thumbnailUrl) || undefined
     })),
   ].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()).slice(0, 3);
 
@@ -75,7 +88,8 @@ export default async function DashboardPage() {
     title: gen.title,
     stream: gen.stream,
     timeAgo: getTimeAgo(gen.createdAt),
-    status: gen.status
+    status: gen.status,
+    imageUrl: (gen as any).imageUrl
   }));
   
   const stats = {

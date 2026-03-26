@@ -19,6 +19,7 @@ export interface DashboardData {
     stream: string;
     timeAgo: string;
     status: string;
+    imageUrl?: string;
   }>;
 }
 
@@ -145,9 +146,15 @@ export default function DashboardClient({ data }: { data: DashboardData }) {
                     gen.type === 'POST' ? 'bg-[#8a2be2]/20 text-[#8a2be2]' : 
                     'bg-pink-500/20 text-pink-500'
                   }`}>
-                    {gen.type === 'IMAGE' && <ImageIcon className="w-5 h-5" />}
-                    {gen.type === 'POST' && <MessageSquare className="w-5 h-5" />}
-                    {gen.type === 'VIDEO' && <Video className="w-5 h-5" />}
+                    {gen.imageUrl ? (
+                      <img src={gen.imageUrl} alt={gen.title} className="w-full h-full object-cover rounded-lg" />
+                    ) : (
+                      <>
+                        {gen.type === 'IMAGE' && <ImageIcon className="w-5 h-5" />}
+                        {gen.type === 'POST' && <MessageSquare className="w-5 h-5" />}
+                        {gen.type === 'VIDEO' && <Video className="w-5 h-5" />}
+                      </>
+                    )}
                   </div>
                   <div>
                     <h4 className="font-medium text-gray-200">{gen.title}</h4>
