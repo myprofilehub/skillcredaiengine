@@ -1,5 +1,7 @@
 export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
+import fs from 'fs';
+import path from 'path';
 
 import { prisma } from '@/lib/prisma';
 import { GeneratedVideo, GeneratedImage } from '@prisma/client';
@@ -40,19 +42,42 @@ export async function GET() {
     };
 
     // Combine and mark types
-    const galleryItems = [
+    const rawItems = [
       ...videos.map((v: GeneratedVideo) => ({ 
         ...v, 
         type: 'video',
         videoUrl: formatUrl(v.videoUrl),
-        thumbnailUrl: formatUrl(v.thumbnailUrl)
+        thumbnailUrl: formatUrl(v.thumbnailUrl),
+        // Use the raw relative path for file existence check
+        _filePath: v.videoUrl ? path.join(process.cwd(), 'public', v.videoUrl.replace('/api/videos/', 'generated-videos/')) : null
       })),
       ...images.map((i: GeneratedImage) => ({ 
         ...i, 
         type: 'image',
-        imageUrl: formatUrl(i.imageUrl)
+        imageUrl: formatUrl(i.imageUrl),
+        // Use the raw relative path for file existence check
+        _filePath: i.imageUrl ? path.join(process.cwd(), 'public', i.imageUrl.replace('/api/images/', 'generated-images/')) : null
       }))
     ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+    // Filter to only include items that actually exist on disk
+    const galleryItems = [];
+    const missingItems = [];
+
+    for (const item of rawItems) {
+      if (item._filePath && fs.existsSync(item._filePath)) {
+        const { _filePath, ...cleanItem } = item;
+        galleryItems.push(cleanItem);
+      } else {
+        missingItems.push(item);
+      }
+      if (galleryItems.length >= 30) break;
+    }
+
+    // Optional: Log missing items for debugging
+    if (missingItems.length > 0) {
+      console.warn(`[Gallery] Found ${missingItems.length} records with missing physical files.`);
+    }
 
     return NextResponse.json({ success: true, items: galleryItems });
 
