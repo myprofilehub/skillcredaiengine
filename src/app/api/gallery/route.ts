@@ -23,7 +23,8 @@ export async function GET() {
       })
     ]);
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || '';
+    // Sanitize baseUrl to ensure no trailing slash
+    const baseUrl = (process.env.NEXT_PUBLIC_BASE_URL || '').replace(/\/+$/, '');
 
     // Function to ensure URL is absolute if it starts with /
     const formatUrl = (url: string | null) => {

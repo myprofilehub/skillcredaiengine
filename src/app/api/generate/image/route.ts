@@ -107,7 +107,8 @@ export async function POST(req: Request) {
       fs.writeFileSync(filePath, imageBuffer);
 
       const relativePath = `/generated-images/${fileName}`;
-      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || '';
+      // Sanitize baseUrl to ensure no trailing slash
+      const baseUrl = (process.env.NEXT_PUBLIC_BASE_URL || '').replace(/\/+$/, '');
       const absolutePath = (baseUrl && relativePath.startsWith('/')) ? `${baseUrl}${relativePath}` : relativePath;
       
       const imageId = crypto.randomUUID();
