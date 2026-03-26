@@ -4,10 +4,9 @@ import path from 'path';
 
 export async function GET(
   request: Request,
-  { params }: { params: { filename: string } }
+  { params }: { params: Promise<{ filename: string }> }
 ) {
-  // Use await for params in newer Next.js versions if needed, but for now standard destructuring is fine
-  const filename = params.filename;
+  const { filename } = await params;
   const filePath = path.join(process.cwd(), 'public', 'generated-images', filename);
 
   if (!fs.existsSync(filePath)) {
