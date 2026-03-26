@@ -106,10 +106,12 @@ export async function POST(req: Request) {
     console.log(`\n🎉 NATIVE HUNYUANVIDEO PIPELINE COMPLETED IN ${finalTime} SECONDS!`);
     console.log(`Saved flawless output to ${outputPath}`);
 
-    const appBaseUrl = (process.env.NEXT_PUBLIC_BASE_URL || '').replace(/\/+$/, '');
-    const videoUrl = `/generated-videos/${jobId}/final_video.mp4`;
-    const absoluteVideoUrl = (appBaseUrl && videoUrl.startsWith('/')) ? `${appBaseUrl}${videoUrl}` : videoUrl;
-    const absoluteThumbnailUrl = (appBaseUrl && videoUrl.startsWith('/')) ? `${appBaseUrl}${videoUrl.replace('.mp4', '.jpg')}` : videoUrl.replace('.mp4', '.jpg');
+    const videoUrlWithPrefix = `/ai-engine/api/videos/${jobId}/final_video.mp4`;
+    const thumbnailUrlWithPrefix = videoUrlWithPrefix.replace('.mp4', '.jpg');
+    
+    const appBaseUrl = (process.env.NEXT_PUBLIC_BASE_URL || '').replace(/\/+$/, '').replace('/ai-engine', '');
+    const absoluteVideoUrl = `${appBaseUrl}${videoUrlWithPrefix}`;
+    const absoluteThumbnailUrl = `${appBaseUrl}${thumbnailUrlWithPrefix}`;
 
     // Update Prisma status
     if (videoId) {
@@ -118,8 +120,8 @@ export async function POST(req: Request) {
           where: { id: videoId },
           data: {
             status: 'COMPLETED',
-            videoUrl: videoUrl, // Save relative with DB, the API will handle the absolute return
-            thumbnailUrl: videoUrl.replace('.mp4', '.jpg')
+            videoUrl: videoUrlWithPrefix, 
+            thumbnailUrl: thumbnailUrlWithPrefix
           }
         });
       } catch (dbError) {

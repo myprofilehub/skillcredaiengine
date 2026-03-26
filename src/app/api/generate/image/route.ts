@@ -106,10 +106,10 @@ export async function POST(req: Request) {
       const filePath = path.join(OUTPUT_DIR, fileName);
       fs.writeFileSync(filePath, imageBuffer);
 
-      const relativePath = `/api/images/${fileName}`;
+      const relativePath = `/ai-engine/api/images/${fileName}`;
       // Sanitize baseUrl to ensure no trailing slash
-      const baseUrl = (process.env.NEXT_PUBLIC_BASE_URL || '').replace(/\/+$/, '');
-      const absolutePath = (baseUrl && relativePath.startsWith('/')) ? `${baseUrl}${relativePath}` : relativePath;
+      const baseUrl = (process.env.NEXT_PUBLIC_BASE_URL || '').replace(/\/+$/, '').replace('/ai-engine', '');
+      const absolutePath = `${baseUrl}${relativePath}`;
       
       const imageId = crypto.randomUUID();
 
@@ -127,7 +127,7 @@ export async function POST(req: Request) {
         console.error("DB Save Error:", dbError);
       }
 
-      results.push({ id: imageId, url: absolutePath });
+      results.push({ id: imageId, url: relativePath });
     }
 
     if (results.length === 0) {

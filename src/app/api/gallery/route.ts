@@ -33,10 +33,17 @@ export async function GET() {
       if (!url) return null;
       
       // Redirect old static paths to the new serving API route
-      let sanitizedUrl = url.replace('/generated-images/', '/api/images/');
+      let sanitizedUrl = url.replace('/generated-images/', '/ai-engine/api/images/');
+      sanitizedUrl = sanitizedUrl.replace('/generated-videos/', '/ai-engine/api/videos/');
       
-      if (sanitizedUrl.startsWith('/') && baseUrl) {
-        return `${baseUrl}${sanitizedUrl}`;
+      // Ensure it starts with /ai-engine/
+      if (!sanitizedUrl.startsWith('/ai-engine/')) {
+        sanitizedUrl = `/ai-engine${sanitizedUrl.startsWith('/') ? '' : '/'}${sanitizedUrl}`;
+      }
+      
+      if (baseUrl) {
+        const cleanBaseUrl = baseUrl.replace('/ai-engine', '');
+        return `${cleanBaseUrl}${sanitizedUrl}`;
       }
       return sanitizedUrl;
     };
@@ -49,14 +56,14 @@ export async function GET() {
         videoUrl: formatUrl(v.videoUrl),
         thumbnailUrl: formatUrl(v.thumbnailUrl),
         // Use the raw relative path for file existence check
-        _filePath: v.videoUrl ? path.join(process.cwd(), 'public', v.videoUrl.replace('/api/videos/', 'generated-videos/')) : null
+        _filePath: v.videoUrl ? path.join(process.cwd(), 'public', v.videoUrl.replace('/ai-engine/api/videos/', 'generated-videos/').replace('/api/videos/', 'generated-videos/').replace('/ai-engine/generated-videos/', 'generated-videos/')) : null
       })),
       ...images.map((i: GeneratedImage) => ({ 
         ...i, 
         type: 'image',
         imageUrl: formatUrl(i.imageUrl),
         // Use the raw relative path for file existence check
-        _filePath: i.imageUrl ? path.join(process.cwd(), 'public', i.imageUrl.replace('/api/images/', 'generated-images/')) : null
+        _filePath: i.imageUrl ? path.join(process.cwd(), 'public', i.imageUrl.replace('/ai-engine/api/images/', 'generated-images/').replace('/api/images/', 'generated-images/').replace('/ai-engine/generated-images/', 'generated-images/')) : null
       }))
     ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
