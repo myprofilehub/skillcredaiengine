@@ -1,0 +1,7 @@
+file 'C:/Users/HP/OneDrive/Documents/skillcredaiengine/public/generated-videos/veo_multi_1774004351218/narration_0.wav'
+file 'C:/Users/HP/OneDrive/Documents/skillcredaiengine/public/generated-videos/veo_multi_1774004351218/narration_1.wav'
+file 'C:/Users/HP/OneDrive/Documents/skillcredaiengine/public/generated-videos/veo_multi_1774004351218/narration_2.wav'
+file 'C:/Users/HP/OneDrive/Documents/skillcredaiengine/public/generated-videos/veo_multi_1774004351218/narration_3.wav'
+file 'C:/Users/HP/OneDrive/Documents/skillcredaiengine/public/generated-videos/veo_multi_1774004351218/narration_4.wav'
+file 'C:/Users/HP/OneDrive/Documents/skillcredaiengine/public/generated-videos/veo_multi_1774004351218/narration_5.wav'
+file 'C:/Users/HP/OneDrive/Documents/skillcredaiengine/public/generated-videos/veo_multi_1774004351218/narration_6.wav'

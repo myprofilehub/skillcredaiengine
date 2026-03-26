@@ -1,0 +1,52 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model ContentTemplate {
+  id        String   @id @default(cuid())
+  type      String   // 'TEXT_POST', 'IMAGE_PROMPT', 'VIDEO_SCRIPT'
+  name      String
+  prompt    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model GeneratedPost {
+  id          String   @id @default(cuid())
+  platform    String   // 'LINKEDIN', 'INSTAGRAM', 'YOUTUBE'
+  content     String
+  hook        String?
+  stream      String?  // One of the 8 streams
+  imageUrl    String?
+  scheduledFor DateTime?
+  status      String   @default("DRAFT") // 'DRAFT', 'PUBLISHED'
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model GeneratedVideo {
+  id          String   @id @default(cuid())
+  title       String
+  script      String
+  videoUrl    String?
+  thumbnailUrl String?
+  status      String   @default("DRAFT") // 'GENERATING', 'COMPLETED', 'FAILED'
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model GeneratedImage {
+  id          String   @id @default(cuid())
+  prompt      String
+  imageUrl    String?
+  stream      String?
+  aspectRatio String?
+  contentType String?
+  status      String   @default("COMPLETED")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

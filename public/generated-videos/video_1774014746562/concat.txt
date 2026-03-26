@@ -1,0 +1,15 @@
+file 'C:/Users/HP/OneDrive/Documents/skillcredaiengine/public/generated-videos/video_1774014746562/scene_0.jpg'
+duration 8.6
+file 'C:/Users/HP/OneDrive/Documents/skillcredaiengine/public/generated-videos/video_1774014746562/scene_1.jpg'
+duration 8.6
+file 'C:/Users/HP/OneDrive/Documents/skillcredaiengine/public/generated-videos/video_1774014746562/scene_2.jpg'
+duration 8.6
+file 'C:/Users/HP/OneDrive/Documents/skillcredaiengine/public/generated-videos/video_1774014746562/scene_3.jpg'
+duration 8.6
+file 'C:/Users/HP/OneDrive/Documents/skillcredaiengine/public/generated-videos/video_1774014746562/scene_4.jpg'
+duration 8.6
+file 'C:/Users/HP/OneDrive/Documents/skillcredaiengine/public/generated-videos/video_1774014746562/scene_5.jpg'
+duration 8.6
+file 'C:/Users/HP/OneDrive/Documents/skillcredaiengine/public/generated-videos/video_1774014746562/scene_6.jpg'
+duration 8.6
+file 'C:/Users/HP/OneDrive/Documents/skillcredaiengine/public/generated-videos/video_1774014746562/scene_6.jpg'
