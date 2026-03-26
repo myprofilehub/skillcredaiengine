@@ -1,4 +1,6 @@
+export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
+
 import { GoogleGenAI } from '@google/genai';
 import { SKILLCRED_STREAMS, PLATFORM_GUIDELINES } from '@/lib/skillcred-context';
 import { prisma } from '@/lib/prisma';
