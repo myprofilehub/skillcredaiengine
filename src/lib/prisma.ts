@@ -8,10 +8,20 @@ const globalForPrisma = globalThis as unknown as {
 
 const connectionString = process.env.DATABASE_URL;
 
-const pool = new Pool({ connectionString });
-// @ts-expect-error - Type mismatch between pg and @prisma/adapter-pg
-const adapter = new PrismaPg(pool);
+if (!connectionString) {
+  console.warn("DATABASE_URL is missing. Prisma will initialize without an adapter (this is normal during build).");
+}
 
-export const prisma = globalForPrisma.prisma ?? new PrismaClient({ adapter });
+const getClient = () => {
+  if (connectionString) {
+    const pool = new Pool({ connectionString });
+    // @ts-expect-error - Type mismatch between pg and @prisma/adapter-pg
+    const adapter = new PrismaPg(pool);
+    return new PrismaClient({ adapter });
+  }
+  return new PrismaClient();
+};
+
+export const prisma = globalForPrisma.prisma ?? getClient();
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
