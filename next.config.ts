@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
+  basePath: '/ai-engine',
   reactCompiler: true,
   async headers() {
     return [
