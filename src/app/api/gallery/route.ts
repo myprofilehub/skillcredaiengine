@@ -29,10 +29,14 @@ export async function GET() {
     // Function to ensure URL is absolute if it starts with /
     const formatUrl = (url: string | null) => {
       if (!url) return null;
-      if (url.startsWith('/') && baseUrl) {
-        return `${baseUrl}${url}`;
+      
+      // Redirect old static paths to the new serving API route
+      let sanitizedUrl = url.replace('/generated-images/', '/api/images/');
+      
+      if (sanitizedUrl.startsWith('/') && baseUrl) {
+        return `${baseUrl}${sanitizedUrl}`;
       }
-      return url;
+      return sanitizedUrl;
     };
 
     // Combine and mark types

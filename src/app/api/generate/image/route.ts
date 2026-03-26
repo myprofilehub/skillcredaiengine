@@ -106,7 +106,7 @@ export async function POST(req: Request) {
       const filePath = path.join(OUTPUT_DIR, fileName);
       fs.writeFileSync(filePath, imageBuffer);
 
-      const relativePath = `/generated-images/${fileName}`;
+      const relativePath = `/api/images/${fileName}`;
       // Sanitize baseUrl to ensure no trailing slash
       const baseUrl = (process.env.NEXT_PUBLIC_BASE_URL || '').replace(/\/+$/, '');
       const absolutePath = (baseUrl && relativePath.startsWith('/')) ? `${baseUrl}${relativePath}` : relativePath;
