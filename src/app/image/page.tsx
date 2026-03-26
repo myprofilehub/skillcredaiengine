@@ -32,7 +32,7 @@ export default function ImageEnginePage() {
     setSelectedImage(null);
 
     try {
-      const res = await fetch("/api/generate/image", {
+      const res = await fetch("/ai-engine/api/generate/image", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

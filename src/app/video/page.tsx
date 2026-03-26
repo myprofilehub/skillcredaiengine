@@ -50,7 +50,7 @@ export default function VideoEnginePage() {
         formData.append("pdf", pdfFile);
       }
 
-      const res = await fetch("/api/generate/video", {
+      const res = await fetch("/ai-engine/api/generate/video", {
         method: "POST",
         body: formData
       });
@@ -82,7 +82,7 @@ export default function VideoEnginePage() {
     try {
       setStatusMessage("Generating images for each scene...");
 
-      const res = await fetch("/api/generate/video-pipeline", {
+      const res = await fetch("/ai-engine/api/generate/video-pipeline", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ topic, style, scenes: scriptData })

@@ -27,7 +27,7 @@ export default function GalleryPage() {
 
   const fetchGallery = async () => {
     try {
-      const res = await fetch('/api/gallery');
+      const res = await fetch('/ai-engine/api/gallery');
       const data = await res.json();
       if (data.success) {
         setItems(data.items);
